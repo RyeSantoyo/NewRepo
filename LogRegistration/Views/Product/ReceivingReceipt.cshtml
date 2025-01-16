@@ -1,0 +1,214 @@
+﻿@model LogRegistration.Models.ReceivingReport
+@{
+    ViewData["Title"] = "Counter Checking";
+}
+
+<h3>
+    @ViewData["Title"]
+</h3>
+<div>
+    <button class="btn btn-primary mb-2" id="btnAdd">Receive Products </button>
+</div>
+
+<div class="container">
+    <table class="table table-warning table-striped table-responsive table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>P.O</th>
+                <th>S.I / D.R #</th>
+                <th>Supplier</th>
+                <th>UOM</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="tblBody">
+        </tbody>
+
+    </table>
+    @*     <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#" onclick="prevPage()">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="nextPage()">Next</a></li>
+        </ul>
+    </nav> *@
+</div>
+
+<div class="modal" id="ProductModal">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h3 class="modal-title" id="modalTitle"> </h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" asp-for="Id" value="0" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <label asp-for="ProductName"></label>
+                            <input type="text" asp-for="ProductName" class="form-label" placeholder="Product Name" />
+                            <span asp-validation-for="ProductName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="PurchaseOrder"></label>
+                            <input type="number" asp-for="PurchaseOrder" class="form-label" placeholder="Product Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="Supplier"></label>
+                            <input type="text" asp-for="Supplier" class="form-label" placeholder="Product Name" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <label asp-for="UOM"></label>
+                            <input type="text" asp-for="UOM" class="form-label" placeholder="Product Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="Quantity"></label>
+                            <input type="text" asp-for="Quantity" class="form-label" placeholder="Product Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="DateTime"></label>
+                            <input type="date" asp-for="DateTime" class="form-label" placeholder="DateTime" />
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="Save" type="submit" onclick="Insert();">Save</button>
+
+                    <button class="btn btn-success" id="Update" type="submit" onclick="Update();" style="display:none">Update</button>
+
+                    <button class="btn btn-danger" data-bs-dismiss="modal" onclick="HideMOdal();">Close </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/receivingReport.js"></script>
+
+@* <script>
+    // Simple Pagination Logic
+const itemsPerPage = 5; // Show 5 items per page
+let currentPage = 1;
+
+function showPage(page) {
+    const rows = document.querySelectorAll("#tblBody tr");
+    const totalItems = rows.length;
+
+    // Calculate start and end index for the page
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    // Loop through and show/hide rows based on the current page
+    rows.forEach((row, index) => {
+        if (index >= start && index < end) {
+            row.style.display = ""; // Show row
+        } else {
+            row.style.display = "none"; // Hide row
+        }
+    });
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        showPage(currentPage);
+    }
+}
+
+function nextPage() {
+    const rows = document.querySelectorAll("#tblBody tr");
+    const totalItems = rows.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    if (currentPage < totalPages) {
+        currentPage++;
+        showPage(currentPage);
+    }
+}
+
+// Show the first page by default
+document.addEventListener("DOMContentLoaded", function () {
+    showPage(1);
+});
+
+</script> *@
+@* <script>
+    $(document).ready(function () {
+        GetProducts();
+    });
+
+    /*read data*/
+
+    function GetProducts() {
+        $.ajax({
+            url: '/product/GetProducts',
+            type: 'get',
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            success: function (response) {
+                if (response == null || response == undefined || response.length == 0) {
+                    var object = '';
+                    object += '<tr>';
+                    object += '<td colspan="15">' + 'No available data' + '</td>';
+                    object += '</tr>';
+                    $('#tblBody').empty().html(object);
+                }
+                else {
+                    var object = '';
+                    $.each(response, function (index, item) {
+                        object += '<tr>';
+                        object += '<td>' + item.id + '</td>';
+                        object += '<td> ' + item.productName + '</td>';
+                        object += '<td>' + item.category + '</td>';
+                        object += '<td>' + item.serialNumber + '</td>';
+                        object += '<td>' + item.description + '</td>';
+                        object += '<td>' + item.price + '</td>';
+                        object += '<td>' + item.quantity + '</td>';
+                        object += '<td>' + item.uom + '</td>';
+                        object += '<td>' + item.totalCost + '</td>';
+                        object += '<td>' + item.costPerUnit + '</td>';
+                        object += '<td>' + item.grossIncome + '</td>';
+                        object += '<td>' + item.totalIncome + '</td>';
+                        object += '<td>' + item.status + '</td>';
+                        object += `<td>
+                                    <div style="display: flex; gap: 5px;">
+                                        <a href="#" class="btn btn-primary btn-sm" onclick="Edit(${item.id})">Edit</a>
+                                        <a href="#" class="btn btn-danger btn-sm" onclick="Delete(${item.id})">Delete</a>
+                                    </div>
+                                </td>`;
+                        object += '</tr>';
+                    });
+                    $('#tblBody').empty().html(object);
+                }
+            },
+            error: function () {
+                alert('Unable to read the data.')
+            }
+        });
+    }
+
+    $('#btnAdd').click(function () {
+        $('#ProductModal').modal('show');
+    });
+
+    /*Insert Data */
+    function Insert(){
+
+    }
+</script>
+
+ *@

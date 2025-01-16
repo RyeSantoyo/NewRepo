@@ -4,6 +4,7 @@ using LogRegistration.Models;
 using LogRegistration.Models.DTOs;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 namespace LogRegistration.Controllers
 {
     public class AccountController : Controller
@@ -159,5 +160,20 @@ namespace LogRegistration.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+        [Authorize]
+        
+        public async Task<IActionResult> Userlist()
+        {
+            List<UserlistDTO> ulistDTO = new List<UserlistDTO>();
+            foreach(var user in await userManager.Users.ToListAsync())
+            {
+                ulistDTO.Add(new UserlistDTO
+                {
+                    Id = user.Id,
+                });
+            }
+            return View(ulistDTO);
+        }
     }
 }

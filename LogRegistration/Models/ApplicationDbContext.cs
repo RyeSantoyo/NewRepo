@@ -8,5 +8,8 @@ namespace LogRegistration.Models
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
+        public virtual DbSet<TbProduct> Products { get; set; }
+        public virtual DbSet<ReceivingReport> ReceivingReports { get; set; }
+
     }
 }
